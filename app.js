@@ -1,4 +1,4 @@
-// VR scene with keyboard and mouse movement support
+// VR scene with keyboard, mouse, and VR joystick movement support
 import * as THREE from './libs/three/three.module.js';
 import { GLTFLoader } from './libs/three/jsm/GLTFLoader.js';
 import { DRACOLoader } from './libs/three/jsm/DRACOLoader.js';
@@ -151,7 +151,52 @@ class App {
     setupXR() {
         this.renderer.xr.enabled = true;
         document.body.appendChild(VRButton.createButton(this.renderer));
+        this.controllers = this.buildControllers();
         this.renderer.setAnimationLoop(this.render.bind(this));
+    }
+
+    buildControllers() {
+        const controllerModelFactory = new XRControllerModelFactory();
+        const controllers = [];
+
+        for (let i = 0; i <= 1; i++) {
+            const controller = this.renderer.xr.getController(i);
+            const grip = this.renderer.xr.getControllerGrip(i);
+            grip.add(controllerModelFactory.createControllerModel(grip));
+            this.scene.add(controller);
+            this.scene.add(grip);
+            controllers.push(controller);
+        }
+
+        return controllers;
+    }
+
+    updateJoystickMovement(dt) {
+        if (!this.controllers) return;
+
+        const speed = 2;
+        let moved = false;
+
+        this.controllers.forEach(controller => {
+            const gamepad = controller?.inputSource?.gamepad;
+            if (!gamepad || gamepad.axes.length < 2) return;
+
+            const [x, y] = gamepad.axes;
+            const threshold = 0.1;
+
+            if (Math.abs(x) > threshold || Math.abs(y) > threshold) {
+                const quaternion = this.dolly.quaternion.clone();
+                this.dolly.quaternion.copy(this.dummyCam.getWorldQuaternion(this.workingQuaternion));
+
+                if (Math.abs(y) > threshold) this.dolly.translateZ(dt * speed * y);
+                if (Math.abs(x) > threshold) this.dolly.translateX(dt * speed * x);
+
+                this.dolly.quaternion.copy(quaternion);
+                moved = true;
+            }
+        });
+
+        return moved;
     }
 
     moveDolly(dt) {
@@ -172,6 +217,7 @@ class App {
     render() {
         const dt = this.clock.getDelta();
         this.moveDolly(dt);
+        this.updateJoystickMovement(dt);
         this.stats.update();
         this.renderer.render(this.scene, this.camera);
     }
