@@ -78,7 +78,8 @@ class App{
           const envMap = pmremGenerator.fromEquirectangular( texture ).texture;
           pmremGenerator.dispose();
 
-          self.scene.environment = envMap;
+            self.scene.environment = envMap;
+            self.scene.background = texture;
 
         }, undefined, (err)=>{
             console.error( 'An error occurred setting the environment');
