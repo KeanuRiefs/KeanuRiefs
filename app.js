@@ -8,9 +8,9 @@ import { VRButton } from './libs/VRButton.js';
 import { CanvasUI } from './libs/CanvasUI.js';
 import { GazeController } from './libs/GazeController.js';
 import { XRControllerModelFactory } from './libs/three/jsm/XRControllerModelFactory.js';
-import { EffectComposer } from './libs/three/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './libs/three/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from './libs/three/jsm/postprocessing/UnrealBloomPass.js';
+import { EffectComposer } from './libs/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from './libs/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from './libs/jsm/postprocessing/UnrealBloomPass.js';
 
 class App {
 	constructor() {
