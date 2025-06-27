@@ -349,16 +349,52 @@ class App{
         this.boardShown = name;
     }
 
-	render( timestamp, frame ){
-        const dt = this.clock.getDelta();
-        
-        if (this.renderer.xr.isPresenting){
-            let moveGaze = false;
-        
-            if ( this.useGaze && this.gazeController!==undefined){
-                this.gazeController.update();
-                moveGaze = (this.gazeController.mode == GazeController.Modes.MOVE);
+	render(timestamp, frame){
+    const dt = this.clock.getDelta();
+
+    // Always allow movement regardless of VR
+    let shouldMove =
+        this.selectPressed ||
+        (this.useGaze && this.gazeController?.mode === GazeController.Modes.MOVE) ||
+        this.moveInput.forward || this.moveInput.backward || this.moveInput.left || this.moveInput.right;
+
+    if (shouldMove) {
+        this.moveDolly(dt);
+
+        // Show UI board only in VR (optional)
+        if (this.boardData && this.renderer.xr.isPresenting) {
+            const dollyPos = this.dolly.getWorldPosition(new THREE.Vector3());
+            let boardFound = false;
+
+            Object.entries(this.boardData).forEach(([name, info]) => {
+                const obj = this.scene.getObjectByName(name);
+                if (obj) {
+                    const pos = obj.getWorldPosition(new THREE.Vector3());
+                    if (dollyPos.distanceTo(pos) < 3) {
+                        boardFound = true;
+                        if (this.boardShown !== name) {
+                            this.showInfoboard(name, info, pos);
+                        }
+                    }
+                }
+            });
+
+            if (!boardFound) {
+                this.boardShown = "";
+                this.ui.visible = false;
             }
+        }
+    }
+
+    if (this.immersive != this.renderer.xr.isPresenting) {
+        this.resize();
+        this.immersive = this.renderer.xr.isPresenting;
+    }
+
+    this.stats.update();
+    this.renderer.render(this.scene, this.camera);
+}
+
         
             if (this.selectPressed || moveGaze ||
     this.moveInput.forward || this.moveInput.backward || this.moveInput.left || this.moveInput.right){
