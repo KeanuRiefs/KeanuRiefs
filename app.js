@@ -93,6 +93,7 @@ class App {
 		dracoLoader.setDecoderPath('./libs/three/js/draco/');
 		loader.setDRACOLoader(dracoLoader);
 
+		// Load College Model
 		loader.load('college.glb', (gltf) => {
 			const model = gltf.scene.children[0];
 			this.scene.add(model);
@@ -111,10 +112,17 @@ class App {
 				}
 			});
 
+			// Load MMU Model (after college is added)
+			loader.load('MMU.glb', (gltf) => {
+				const mmu = gltf.scene;
+				this.scene.add(mmu);
+			});
+
 			this.loadingBar.visible = false;
 			this.setupXR();
 		});
 	}
+
 
 	setupXR() {
 		this.renderer.xr.enabled = true;
