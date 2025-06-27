@@ -52,7 +52,6 @@ class App {
 
 		this.loadingBar = new LoadingBar();
 		this.loadCollege();
-		this.loadMMU();
 
 		this.clock = new THREE.Clock();
 		this.up = new THREE.Vector3(0, 1, 0);
@@ -114,16 +113,6 @@ class App {
 
 			this.loadingBar.visible = false;
 			this.setupXR();
-		});
-	}
-
-	loadMMU() {
-		const loader = new GLTFLoader().setPath(this.assetsPath);
-		loader.load('MMU.glb', (gltf) => {
-			const mmu = gltf.scene;
-			mmu.name = 'MMU';
-			this.scene.add(mmu);
-			console.log('✅ MMU model loaded');
 		});
 	}
 
