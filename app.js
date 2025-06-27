@@ -74,7 +74,9 @@ class App{
         
         const self = this;
         
-        loader.load( './assets/hdr/rogland_clear_night_1k.hdr', ( texture ) => {
+        loader.load('./assets/hdr/rogland_clear_night_1k.hdr', (texture) => {
+            console.log("HDR successfully loaded!");
+
           const envMap = pmremGenerator.fromEquirectangular( texture ).texture;
           pmremGenerator.dispose();
 
