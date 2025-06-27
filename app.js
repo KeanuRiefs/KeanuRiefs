@@ -34,11 +34,6 @@ class App {
 		this.renderer.outputEncoding = THREE.sRGBEncoding;
 		container.appendChild(this.renderer.domElement);
 
-		this.composer = new EffectComposer(this.renderer);
-		this.composer.addPass(new RenderPass(this.scene, this.camera));
-		const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.4, 0.85);
-		this.composer.addPass(bloomPass);
-
 		window.addEventListener('resize', this.resize.bind(this));
 
 		this.scene.add(new THREE.HemisphereLight(0xffffff, 0xaaaaaa, 0.8));
@@ -81,7 +76,6 @@ class App {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.composer.setSize(window.innerWidth, window.innerHeight);
 	}
 
 	loadCollege() {
@@ -90,7 +84,6 @@ class App {
 		dracoLoader.setDecoderPath('./libs/three/js/draco/');
 		loader.setDRACOLoader(dracoLoader);
 
-		// Load College Model
 		loader.load('college.glb', (gltf) => {
 			const model = gltf.scene.children[0];
 			this.scene.add(model);
@@ -109,7 +102,6 @@ class App {
 				}
 			});
 
-			// Load MMU Model (after college is added)
 			loader.load('MMU.glb', (gltf) => {
 				const mmu = gltf.scene;
 				this.scene.add(mmu);
@@ -119,7 +111,6 @@ class App {
 			this.setupXR();
 		});
 	}
-
 
 	setupXR() {
 		this.renderer.xr.enabled = true;
@@ -248,7 +239,7 @@ class App {
 			this.immersive = this.renderer.xr.isPresenting;
 		}
 		this.stats.update();
-		this.composer.render();
+		this.renderer.render(this.scene, this.camera);
 	}
 }
 
