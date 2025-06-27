@@ -65,7 +65,28 @@ class App{
                 self.boardShown = '';
                 self.boardData = obj;
             });
+		
 	}
+	this.moveInput = { forward: false, backward: false, left: false, right: false };
+
+window.addEventListener('keydown', (event) => {
+    switch(event.key.toLowerCase()) {
+        case 'w': this.moveInput.forward = true; break;
+        case 's': this.moveInput.backward = true; break;
+        case 'a': this.moveInput.left = true; break;
+        case 'd': this.moveInput.right = true; break;
+    }
+});
+
+window.addEventListener('keyup', (event) => {
+    switch(event.key.toLowerCase()) {
+        case 'w': this.moveInput.forward = false; break;
+        case 's': this.moveInput.backward = false; break;
+        case 'a': this.moveInput.left = false; break;
+        case 'd': this.moveInput.right = false; break;
+    }
+});
+
 	
     setEnvironment(){
         const loader = new RGBELoader().setDataType( THREE.UnsignedByteType );
