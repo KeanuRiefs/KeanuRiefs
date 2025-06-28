@@ -16,7 +16,6 @@ class App {
 
 		this.assetsPath = './assets/';
 		this.scene = new THREE.Scene();
-
 		this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 500);
 		this.camera.position.set(0, 1.6, 0);
 
@@ -34,27 +33,7 @@ class App {
 		this.renderer.outputEncoding = THREE.sRGBEncoding;
 		container.appendChild(this.renderer.domElement);
 
-		// === 🎵 Background Music ===
-		const listener = new THREE.AudioListener();
-		this.camera.add(listener);
-
-		this.sound = new THREE.Audio(listener);
-		const audioLoader = new THREE.AudioLoader();
-		audioLoader.load('./assets/bg-music.mp3', (buffer) => {
-			this.sound.setBuffer(buffer);
-			this.sound.setLoop(true);
-			this.sound.setVolume(0.5);
-		});
-
-		const startBtn = document.getElementById('startBtn');
-		if (startBtn) {
-			startBtn.addEventListener('click', () => {
-				if (!this.sound.isPlaying) this.sound.play();
-				startBtn.style.display = 'none';
-			});
-		}
-		// ===
-
+		this.setupAudio();
 		window.addEventListener('resize', this.resize.bind(this));
 
 		this.scene.add(new THREE.HemisphereLight(0xffffff, 0xaaaaaa, 0.8));
@@ -78,6 +57,28 @@ class App {
 			this.boardData = obj;
 			this.boardShown = '';
 		});
+	}
+
+	setupAudio() {
+		const listener = new THREE.AudioListener();
+		this.camera.add(listener);
+
+		this.sound = new THREE.Audio(listener);
+		const audioLoader = new THREE.AudioLoader();
+		audioLoader.load('./assets/bg-music.mp3', (buffer) => {
+			this.sound.setBuffer(buffer);
+			this.sound.setLoop(true);
+			this.sound.setVolume(0.5);
+		});
+	}
+
+	playAudio() {
+		if (this.sound && this.sound.context.state === 'suspended') {
+			this.sound.context.resume();
+		}
+		if (!this.sound.isPlaying) {
+			this.sound.play();
+		}
 	}
 
 	setEnvironment() {
