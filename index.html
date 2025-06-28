@@ -1,56 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>VR Architectural Walkthrough with WebXR</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="apple-touch-icon" sizes="180x180" href="./css/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./css/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./css/favicon/favicon-16x16.png">
-    <link rel="manifest" href="./css/favicon/site.webmanifest">
-    <link rel="mask-icon" href="./css/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <!-- end favicon -->
-    <link type="text/css" rel="stylesheet" href="./css/common.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
+  <title>VR Architectural Walkthrough with WebXR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./css/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./css/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./css/favicon/favicon-16x16.png">
+  <link rel="manifest" href="./css/favicon/site.webmanifest">
+  <link rel="mask-icon" href="./css/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" type="text/css" href="./css/common.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
 
-        #startBtn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-    </style>
+    #startBtn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <!-- Start Button for Audio Activation -->
-    <button id="startBtn">Start Experience</button>
+  <!-- Start Button for Audio and App Init -->
+  <button id="startBtn">Start Experience</button>
 
-    <script src="./libs/fas.js"></script>
-	<script type="module">
-        import { App } from './app.js';
-        
-		document.addEventListener("DOMContentLoaded", function(){
-			const app = new App();
-			window.app = app;
+  <script src="./libs/fas.js"></script>
+  <script type="module">
+    import { App } from './app.js';
 
-            // Audio unlock trigger
-            const startBtn = document.getElementById('startBtn');
-            startBtn.addEventListener('click', () => {
-                if (app.sound && !app.sound.isPlaying) {
-                    app.sound.play();
-                }
-                startBtn.style.display = 'none';
-            });
-		});
-	</script>
+    let app;
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      // Start app after user gesture
+      app = new App();
+      window.app = app;
+
+      // Manually resume AudioContext (for mobile and desktop)
+      if (app.sound && app.sound.context && app.sound.context.state === 'suspended') {
+        app.sound.context.resume().then(() => {
+          app.sound.play();
+        });
+      }
+
+      document.getElementById('startBtn').style.display = 'none';
+    });
+  </script>
 </body>
 </html>
