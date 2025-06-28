@@ -44,13 +44,15 @@ class App {
 			this.sound.setBuffer(buffer);
 			this.sound.setLoop(true);
 			this.sound.setVolume(0.5);
-			this.sound.play();
 		});
 
-		document.body.addEventListener('click', () => {
-			if (!this.sound.isPlaying) this.sound.play();
-		}, { once: true });
-
+		const startBtn = document.getElementById('startBtn');
+		if (startBtn) {
+			startBtn.addEventListener('click', () => {
+				if (!this.sound.isPlaying) this.sound.play();
+				startBtn.style.display = 'none';
+			});
+		}
 		// ===
 
 		window.addEventListener('resize', this.resize.bind(this));
