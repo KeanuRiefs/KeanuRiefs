@@ -13,13 +13,27 @@
     <!-- end favicon -->
     <link type="text/css" rel="stylesheet" href="./css/common.css">
     <style>
-        body{
+        body {
             margin: 0;
             padding: 0;
+        }
+
+        #startBtn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <!-- Start Button for Audio Activation -->
+    <button id="startBtn">Start Experience</button>
+
     <script src="./libs/fas.js"></script>
 	<script type="module">
         import { App } from './app.js';
@@ -27,6 +41,15 @@
 		document.addEventListener("DOMContentLoaded", function(){
 			const app = new App();
 			window.app = app;
+
+            // Audio unlock trigger
+            const startBtn = document.getElementById('startBtn');
+            startBtn.addEventListener('click', () => {
+                if (app.sound && !app.sound.isPlaying) {
+                    app.sound.play();
+                }
+                startBtn.style.display = 'none';
+            });
 		});
 	</script>
 </body>
